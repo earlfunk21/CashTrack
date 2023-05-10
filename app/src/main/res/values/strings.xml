@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">CashTrack</string>
     <string name="money_manager">Money Manager</string>
+    <string name="new_transaction">New Transaction</string>
+    <string-array name="categories">
+        <item>Sneakers</item>
+        <item>Fitness</item>
+        <item>Education</item>
+    </string-array>
 </resources>
