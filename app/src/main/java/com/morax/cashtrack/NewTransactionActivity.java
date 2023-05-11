@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.morax.cashtrack.model.TransactionModel;
+import com.morax.cashtrack.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -70,18 +71,7 @@ public class NewTransactionActivity extends AppCompatActivity implements Adapter
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         strCategory = adapterView.getItemAtPosition(i).toString();
-        int thumbnail = R.drawable.sneakers;
-        switch (strCategory){
-            case "Sneakers":
-                thumbnail = R.drawable.sneakers;
-                break;
-            case "Fitness":
-                thumbnail = R.drawable.fitness;
-                break;
-            case "Education":
-                thumbnail = R.drawable.education;
-                break;
-        }
+        int thumbnail = Utils.getCategoryThumbnail(strCategory);
         ivCategoryThumbnail.setImageResource(thumbnail);
     }
 

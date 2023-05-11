@@ -2,6 +2,7 @@
     <string name="app_name">CashTrack</string>
     <string name="money_manager">Money Manager</string>
     <string name="new_transaction">New Transaction</string>
+    <string name="transaction_details">Transaction Details</string>
     <string-array name="categories">
         <item>Sneakers</item>
         <item>Fitness</item>
