@@ -14,12 +14,10 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.morax.cashtrack.model.TransactionModel;
+import com.morax.cashtrack.database.entity.TransactionEntity;
 import com.morax.cashtrack.utils.Utils;
-
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
+import java.util.Date;
 
 public class NewTransactionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -27,6 +25,7 @@ public class NewTransactionActivity extends AppCompatActivity implements Adapter
     private EditText etAmount, etNote;
     private ImageView ivCategoryThumbnail;
     private String strCategory;
+    private Date date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +59,8 @@ public class NewTransactionActivity extends AppCompatActivity implements Adapter
             @Override
             public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                 calendar.set(i, i1, i2);
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy", Locale.getDefault());
-                String formattedDate = sdf.format(calendar.getTime());
-                tvTransDate.setText(formattedDate);
+                date = calendar.getTime();
+                tvTransDate.setText(Utils.formatDate(date));
             }
         }, initialYear, initialMonth, initialDay);
         datePickerDialog.show();
@@ -83,11 +81,10 @@ public class NewTransactionActivity extends AppCompatActivity implements Adapter
 
     public void addNewTransaction(View view) {
         double amount = Double.parseDouble(etAmount.getText().toString());
-        String date = tvTransDate.getText().toString();
         String note = etNote.getText().toString();
-        TransactionModel transactionModel = new TransactionModel(amount, strCategory, date, note);
+        TransactionEntity transactionEntity = new TransactionEntity(amount, strCategory, date, note);
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("model", transactionModel);
+        intent.putExtra("model", transactionEntity);
         startActivity(intent);
     }
 }

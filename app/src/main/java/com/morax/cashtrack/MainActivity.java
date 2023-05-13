@@ -9,39 +9,40 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.morax.cashtrack.adapter.TransactionAdapter;
-import com.morax.cashtrack.model.TransactionModel;
+import com.morax.cashtrack.database.AppDatabase;
+import com.morax.cashtrack.database.dao.TransactionDao;
+import com.morax.cashtrack.database.entity.TransactionEntity;
+import com.morax.cashtrack.utils.CurrencyFormatter;
+import com.morax.cashtrack.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RadioGroup rg;
-    private RadioButton weeklyRG, monthlyRG, months3;
+    private List<TransactionEntity> transactionEntityList;
 
-    private List<TransactionModel> transactionModelList;
+    private TransactionDao transactionDao;
+    private TransactionAdapter transactionAdapter;
+    private TextView tvExpense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        transactionDao = AppDatabase.getInstance(this).transactionDao();
         initData();
-        RecyclerView rvTransaction = (RecyclerView) findViewById(R.id.rv_transaction);
-        TransactionAdapter transactionAdapter = new TransactionAdapter(this, transactionModelList);
+        RecyclerView rvTransaction = findViewById(R.id.rv_transaction);
+        transactionAdapter = new TransactionAdapter(this, transactionEntityList);
         rvTransaction.setAdapter(transactionAdapter);
-
-        rg = findViewById(R.id.report_rg);
-        rg.clearCheck();
-
-        weeklyRG = findViewById(R.id.weekly_rb);
-        monthlyRG = findViewById(R.id.monthly_rb);
-        monthlyRG = findViewById(R.id.months3_rb);
-
-        weeklyRG.setChecked(true);
-
-
+        tvExpense = findViewById(R.id.tv_expense);
+        setDateAsYearly(tvExpense);
     }
 
     public void openNewTransaction(View view) {
@@ -50,18 +51,81 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        transactionModelList = new ArrayList<>();
+        transactionEntityList = new ArrayList<>();
         Intent intent = getIntent();
-        TransactionModel transactionModel = (TransactionModel) intent.getSerializableExtra("model");
-        if (transactionModel != null)
-            transactionModelList.add(transactionModel);
+        TransactionEntity transactionModel = (TransactionEntity) intent.getSerializableExtra("model");
+        if (transactionModel != null) transactionDao.insert(transactionModel);
 
-        transactionModelList.add(new TransactionModel(320000, "Sneakers", "01/01/2003", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
-        transactionModelList.add(new TransactionModel(592929, "Fitness", "02/05/2003", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
-        transactionModelList.add(new TransactionModel(312399, "Education", "07/25/2003", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
-        transactionModelList.add(new TransactionModel(592929, "Fitness", "02/05/2003", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
-        transactionModelList.add(new TransactionModel(320000, "Sneakers", "01/01/2003", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
-
-
+        try {
+            transactionEntityList.addAll(transactionDao.getAllTransactions());
+        } catch (NullPointerException ignored) {}
     }
+
+    public void setDateAsWeekly(View view) {
+        // Current Date
+
+        Calendar calendar = Calendar.getInstance();
+
+        // Calculate the start of the current week (Sunday)
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        Date startOfWeek = calendar.getTime();
+
+        // Calculate the end of the current week (Saturday)
+        calendar.add(Calendar.DAY_OF_WEEK, 6);
+        Date endOfWeek = calendar.getTime();
+        try {
+            double expense = 0;
+            if(transactionDao.getSumOfAmountThisWeek(startOfWeek, endOfWeek) != null)
+                expense = transactionDao.getSumOfAmountThisWeek(startOfWeek, endOfWeek);
+            tvExpense.setText(CurrencyFormatter.convertFromString(expense));
+        } catch (NullPointerException ignored){}
+    }
+
+    public void setDateAsMonthly(View view) {
+        // Current Date
+        Calendar calendar = Calendar.getInstance();
+
+        // Set the day of the month to the first day
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date startOfMonth = calendar.getTime();
+
+        // Get the maximum number of days in the current month
+        int maxDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        // Set the day of the month to the last day
+        calendar.set(Calendar.DAY_OF_MONTH, maxDaysInMonth);
+        Date endOfMonth = calendar.getTime();
+
+        try {
+            double expense = 0;
+            if(transactionDao.getSumOfAmountThisWeek(startOfMonth, endOfMonth) != null)
+                expense = transactionDao.getSumOfAmountThisWeek(startOfMonth, endOfMonth);
+            tvExpense.setText(CurrencyFormatter.convertFromString(expense));
+        } catch (NullPointerException ignored) {}
+    }
+
+    public void setDateAsYearly(View view) {
+        // Current Date
+        Calendar calendar = Calendar.getInstance();
+
+        // Set the day of the month to the first day of January
+        calendar.set(Calendar.MONTH, Calendar.JANUARY);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date startOfYear = calendar.getTime();
+
+        // Set the month to December
+        calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+
+        // Set the day of the month to the last day of December
+        calendar.set(Calendar.DAY_OF_MONTH, 31);
+        Date endOfYear = calendar.getTime();
+
+        try {
+            double expense = 0;
+            if(transactionDao.getSumOfAmountThisWeek(startOfYear, endOfYear) != null)
+                expense = transactionDao.getSumOfAmountThisWeek(startOfYear, endOfYear);
+            tvExpense.setText(CurrencyFormatter.convertFromString(expense));
+        } catch (NullPointerException ignored) {}
+    }
+
 }
