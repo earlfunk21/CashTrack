@@ -10,27 +10,29 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.morax.cashtrack.R;
-import com.morax.cashtrack.TransactionDetails;
-import com.morax.cashtrack.database.entity.TransactionEntity;
+import com.morax.cashtrack.TransactionDetailsActivity;
+import com.morax.cashtrack.database.entity.Transaction;
 import com.morax.cashtrack.utils.CurrencyFormatter;
 import com.morax.cashtrack.utils.Utils;
+
 import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
-    private List<TransactionEntity> transactionEntityList;
+    private List<Transaction> transactionList;
     private Context context;
 
-    public TransactionAdapter(Context context, List<TransactionEntity> transactionEntityList) {
+    public TransactionAdapter(Context context, List<Transaction> transactionEntityList) {
         this.context = context;
-        this.transactionEntityList = transactionEntityList;
+        this.transactionList = transactionEntityList;
     }
 
 
-    public void setTransactionEntityList(List<TransactionEntity> transactionEntityList) {
-        this.transactionEntityList = transactionEntityList;
+    public void setTransactionEntityList(List<Transaction> transactionEntityList) {
+        this.transactionList = transactionEntityList;
         notifyDataSetChanged();
     }
 
@@ -45,27 +47,33 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TransactionEntity transactionEntity = transactionEntityList.get(position);
-        String amount = CurrencyFormatter.convertFromString(transactionEntity.amount);
-        String category = transactionEntity.category;
+        Transaction transaction = transactionList.get(position);
+        String amount = CurrencyFormatter.convertFromString(transaction.amount);
+        String category = transaction.category;
         int thumbnail = Utils.getCategoryThumbnail(category);
         holder.getIvCategoryThumbnail().setImageResource(thumbnail);
+        if (transaction.type == null) transaction.type = "Expense";
+        if (transaction.type.equals("Expense")) {
+            holder.getTvAmount().setTextColor(ContextCompat.getColor(context, android.R.color.holo_red_light));
+            amount = "-" + amount;
+        }
         holder.getTvAmount().setText(amount);
-        holder.getTvDate().setText(Utils.formatDate(transactionEntity.date));
+        holder.getTvDate().setText(Utils.formatDate(transaction.date));
         holder.getTvCategory().setText(category);
         holder.getCvTransactionItem().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, TransactionDetails.class);
-                intent.putExtra("model", transactionEntity);
+                Intent intent = new Intent(context, TransactionDetailsActivity.class);
+                intent.putExtra("model", transaction);
                 context.startActivity(intent);
             }
         });
     }
 
+
     @Override
     public int getItemCount() {
-        return transactionEntityList.size();
+        return transactionList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

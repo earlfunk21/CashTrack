@@ -7,12 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.morax.cashtrack.database.entity.TransactionEntity;
+import com.morax.cashtrack.database.entity.Transaction;
 import com.morax.cashtrack.utils.CurrencyFormatter;
 import com.morax.cashtrack.utils.Utils;
 
 
-public class TransactionDetails extends AppCompatActivity {
+public class TransactionDetailsActivity extends AppCompatActivity {
 
     private TextView tvCategory, tvAmount, tvDate, tvNote;
 
@@ -27,7 +27,7 @@ public class TransactionDetails extends AppCompatActivity {
         tvNote = findViewById(R.id.tv_note_details);
 
         Intent intent = getIntent();
-        TransactionEntity transactionEntity = (TransactionEntity) intent.getSerializableExtra("model");
+        Transaction transactionEntity = (Transaction) intent.getSerializableExtra("model");
 
         tvCategory.setText(transactionEntity.category);
         tvAmount.setText(CurrencyFormatter.convertFromString(transactionEntity.amount));

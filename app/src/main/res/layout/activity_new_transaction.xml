@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewTransactionActivity"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".NewTransactionActivity">
 
     <LinearLayout
         android:id="@+id/toolbar"
@@ -27,33 +27,93 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="goBack"
-            android:src="@drawable/baseline_arrow_back_ios_new_24"/>
+            android:src="@drawable/baseline_arrow_back_ios_new_24" />
 
         <TextView
             android:id="@+id/toolbarTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
             android:text="@string/new_transaction"
-            android:fontFamily="@font/poppins_semibold"
             android:textColor="@color/primary900"
             android:textSize="20sp" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="40dp"
-            android:layout_height="42dp"
-            android:src="@drawable/avatar" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:orientation="vertical"
         android:padding="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_save"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <RadioGroup
+            android:id="@+id/report_rg"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:measureWithLargestChild="true"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/weekly_rb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_radio_button"
+                android:button="@null"
+                android:checked="true"
+                android:drawableStart="@drawable/tab_item_icon"
+                android:elevation="4dp"
+                android:fontFamily="@font/poppins"
+                android:gravity="center"
+                android:onClick="setTypeExpense"
+                android:padding="10dp"
+                android:text="Expense"
+                android:textColor="@drawable/text_color_rb" />
+
+            <RadioButton
+                android:id="@+id/monthly_rb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_radio_button"
+                android:button="@null"
+                android:drawableStart="@drawable/tab_item_icon"
+                android:elevation="4dp"
+                android:fontFamily="@font/poppins"
+                android:gravity="center"
+                android:onClick="setTypeIncome"
+                android:padding="10dp"
+                android:text="Income"
+                android:textColor="@drawable/text_color_rb" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:text="Account"
+            android:textColor="@color/disabled_text"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp">
+
+            <Spinner
+                android:id="@+id/spinner_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -73,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_semibold"
                 android:gravity="center"
-                android:text="IDR"
+                android:text="PHP"
                 android:textColor="@color/primary900"
                 android:textSize="20sp" />
 
@@ -84,14 +144,14 @@
                 android:layout_marginStart="15dp"
                 android:backgroundTint="@color/disabled_text"
                 android:fontFamily="@font/poppins_semibold"
+                android:hint="Enter an amount"
                 android:inputType="number"
                 android:letterSpacing=".1"
                 android:paddingStart="10dp"
-                tools:text="3,800,000"
                 android:textColor="@android:color/holo_red_light"
+                android:textColorHint="@color/disabled_text"
                 android:textSize="20sp"
-                android:hint="Enter an amount"
-                android:textColorHint="@color/disabled_text"/>
+                tools:text="3,800,000" />
         </LinearLayout>
 
         <TextView
@@ -107,19 +167,11 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp">
 
-            <ImageView
-                android:id="@+id/iv_category_thumbnail"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:scaleType="fitCenter"
-                tools:src="@drawable/fitness" />
-
             <Spinner
                 android:id="@+id/spinner_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:entries="@array/categories"/>
+                android:entries="@array/categories" />
 
         </LinearLayout>
 
@@ -136,21 +188,21 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:background="@drawable/line_btn"
-            android:focusable="true"
-            android:clickable="true">
+            android:clickable="true"
+            android:focusable="true">
 
             <TextView
                 android:id="@+id/tv_trans_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:drawableTint="@color/black"
                 android:fontFamily="@font/poppins_bold"
-                tools:text="Sat, 10 Oct 2020"
-                android:textColor="@color/primary900"
-                android:textSize="16sp"
-                android:onClick="openDateDialog"
                 android:hint="Choose a date"
-                android:textColorHint="@color/disabled_text"/>
+                android:onClick="openDateDialog"
+                android:textColor="@color/primary900"
+                android:textColorHint="@color/disabled_text"
+                android:textSize="16sp"
+                app:drawableTint="@color/black"
+                tools:text="Sat, 10 Oct 2020" />
 
         </LinearLayout>
 
@@ -164,35 +216,37 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp">
+            android:layout_height="0dp"
+            android:layout_marginBottom="30dp"
+            android:layout_weight="1">
 
             <EditText
                 android:id="@+id/et_note"
                 android:layout_width="match_parent"
-                android:layout_height="138dp"
+                android:layout_height="wrap_content"
                 android:backgroundTint="@color/disabled_text"
                 android:drawableTint="@color/black"
                 android:fontFamily="@font/poppins_bold"
-                android:inputType="textMultiLine"
-                tools:text="Air Jordan 1 Retro High OG \n 'Court Purple 2.0'\n Finally, I got this, I'm super happy"
-                android:textColor="@color/primary900"
-                android:textSize="16sp"
                 android:hint="Take a note something..."
-                android:textColorHint="@color/disabled_text"/>
+                android:inputType="textMultiLine"
+                android:textColor="@color/primary900"
+                android:textColorHint="@color/disabled_text"
+                android:textSize="16sp"
+                tools:text="Air Jordan 1 Retro High OG \n 'Court Purple 2.0'\n Finally, I got this, I'm super happy" />
         </LinearLayout>
     </LinearLayout>
 
     <Button
+        android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_margin="30dp"
         android:background="@drawable/btn_save_bg"
         android:fontFamily="@font/poppins_semibold"
+        android:onClick="addNewTransaction"
         android:text="Save"
         android:textColor="@color/white"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:onClick="addNewTransaction"/>
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,22 +7,26 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.morax.cashtrack.database.converter.DateTypeConverter;
+import com.morax.cashtrack.database.converter.BigDecimalConverter;
+import com.morax.cashtrack.database.converter.DateConverter;
+import com.morax.cashtrack.database.dao.AccountDao;
 import com.morax.cashtrack.database.dao.TransactionDao;
-import com.morax.cashtrack.database.entity.TransactionEntity;
+import com.morax.cashtrack.database.entity.Account;
+import com.morax.cashtrack.database.entity.Transaction;
 
-@Database(entities = {TransactionEntity.class}, version = 1)
-@TypeConverters({DateTypeConverter.class})
+@Database(entities = {Account.class, Transaction.class}, version = 1)
+@TypeConverters({DateConverter.class, BigDecimalConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract TransactionDao transactionDao();
+    public abstract AccountDao accountDao();
 
     private static AppDatabase instance;
 
     public static AppDatabase getInstance(Context context) {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class,
-                    "my_db").allowMainThreadQueries().build();
+                    "test_db").allowMainThreadQueries().build();
         }
         return instance;
     }

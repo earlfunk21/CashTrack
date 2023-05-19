@@ -10,38 +10,75 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.morax.cashtrack.database.entity.TransactionEntity;
+import com.morax.cashtrack.database.AppDatabase;
+import com.morax.cashtrack.database.dao.TransactionDao;
+import com.morax.cashtrack.database.entity.Account;
+import com.morax.cashtrack.database.entity.Transaction;
 import com.morax.cashtrack.utils.Utils;
+
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-public class NewTransactionActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class NewTransactionActivity extends AppCompatActivity {
 
     private TextView tvTransDate;
     private EditText etAmount, etNote;
-    private ImageView ivCategoryThumbnail;
     private String strCategory;
+    private long accountId;
     private Date date;
+    private TransactionDao transactionDao;
+    private String transactionType = "Expense";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_transaction);
+        transactionDao = AppDatabase.getInstance(this).transactionDao();
 
         etAmount = findViewById(R.id.et_amount);
         tvTransDate = findViewById(R.id.tv_trans_date);
         etNote = findViewById(R.id.et_note);
-        ivCategoryThumbnail = findViewById(R.id.iv_category_thumbnail);
 
+        // Spinner Category
         Spinner spinnerCategory = findViewById(R.id.spinner_category);
-        ArrayAdapter<CharSequence> spinnerCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.category_spinner_layout);
-        spinnerCategoryAdapter.setDropDownViewResource(R.layout.category_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> spinnerCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_dropdown_layout);
+        spinnerCategoryAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinnerCategory.setAdapter(spinnerCategoryAdapter);
-        spinnerCategory.setOnItemSelectedListener(this);
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                strCategory = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        // Spinner Category
+        Spinner spinner = findViewById(R.id.spinner_account); // Replace `R.id.spinner` with the actual ID of your spinner
+        List<Account> accounts = AppDatabase.getInstance(this).accountDao().getAccounts();
+        ArrayAdapter<Account> accountArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_layout, accounts);
+        accountArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinner.setAdapter(accountArrayAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Account selectedAccount = (Account) parent.getItemAtPosition(position);
+                accountId = selectedAccount.id;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle case when no item is selected
+            }
+        });
     }
 
     public void goBack(View view) {
@@ -66,25 +103,23 @@ public class NewTransactionActivity extends AppCompatActivity implements Adapter
         datePickerDialog.show();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        strCategory = adapterView.getItemAtPosition(i).toString();
-        int thumbnail = Utils.getCategoryThumbnail(strCategory);
-        ivCategoryThumbnail.setImageResource(thumbnail);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
 
     public void addNewTransaction(View view) {
-        double amount = Double.parseDouble(etAmount.getText().toString());
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(etAmount.getText().toString()));
         String note = etNote.getText().toString();
-        TransactionEntity transactionEntity = new TransactionEntity(amount, strCategory, date, note);
+        Transaction transaction = new Transaction(accountId, strCategory, date, amount, note);
+        transaction.type = transactionType;
+        transactionDao.insert(transaction);
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("model", transactionEntity);
         startActivity(intent);
     }
+
+    public void setTypeIncome(View view) {
+        transactionType = "Income";
+    }
+
+    public void setTypeExpense(View view) {
+        transactionType = "Expense";
+    }
+
 }

@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 public class CurrencyFormatter {
-    public static String convertFromString(double value){
+    public static String convertFromString(BigDecimal value){
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator(',');
         String pattern = "#,##0.###";

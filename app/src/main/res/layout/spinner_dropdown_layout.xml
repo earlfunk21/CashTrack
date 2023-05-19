@@ -3,13 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:textColor="@color/primary500"
-    android:background="@drawable/line_btn"
-    android:textSize="24sp"
-    android:fontFamily="@font/poppins_bold"
+    android:background="@color/white"
     android:drawableEnd="@drawable/baseline_keyboard_arrow_down_24"
     android:drawableTint="@color/black"
-    tools:text="Sneakers">
+    android:fontFamily="@font/poppins_bold"
+    android:padding="5dp"
+    android:textColor="@color/black"
+    android:textSize="18sp"
+    tools:text="Sneakers"
+    android:gravity="center_vertical">
 
 </CheckedTextView>
