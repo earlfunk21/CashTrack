@@ -14,8 +14,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.morax.cashtrack.database.AppDatabase;
+import com.morax.cashtrack.database.dao.AccountDao;
+import com.morax.cashtrack.database.dao.CategoryDao;
 import com.morax.cashtrack.database.dao.TransactionDao;
 import com.morax.cashtrack.database.entity.Account;
+import com.morax.cashtrack.database.entity.Category;
 import com.morax.cashtrack.database.entity.Transaction;
 import com.morax.cashtrack.utils.Utils;
 
@@ -32,6 +35,8 @@ public class NewTransactionActivity extends AppCompatActivity {
     private long accountId;
     private Date date;
     private TransactionDao transactionDao;
+    private CategoryDao categoryDao;
+    private AccountDao accountDao;
     private String transactionType = "Expense";
 
     @Override
@@ -39,16 +44,23 @@ public class NewTransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_transaction);
         transactionDao = AppDatabase.getInstance(this).transactionDao();
+        categoryDao = AppDatabase.getInstance(this).categoryDao();
+        accountDao = AppDatabase.getInstance(this).accountDao();
 
         etAmount = findViewById(R.id.et_amount);
         tvTransDate = findViewById(R.id.tv_trans_date);
         etNote = findViewById(R.id.et_note);
 
+        // Init Date
+        date = Calendar.getInstance().getTime();
+        tvTransDate.setText(Utils.formatDate(date));
+
         // Spinner Category
         Spinner spinnerCategory = findViewById(R.id.spinner_category);
-        ArrayAdapter<CharSequence> spinnerCategoryAdapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_dropdown_layout);
-        spinnerCategoryAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerCategory.setAdapter(spinnerCategoryAdapter);
+        List<Category> categories = categoryDao.getCategories();
+        ArrayAdapter<Category> categoryArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_layout, categories);
+        categoryArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerCategory.setAdapter(categoryArrayAdapter);
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -63,7 +75,7 @@ public class NewTransactionActivity extends AppCompatActivity {
 
         // Spinner Category
         Spinner spinner = findViewById(R.id.spinner_account); // Replace `R.id.spinner` with the actual ID of your spinner
-        List<Account> accounts = AppDatabase.getInstance(this).accountDao().getAccounts();
+        List<Account> accounts = accountDao.getAccounts();
         ArrayAdapter<Account> accountArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_layout, accounts);
         accountArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         spinner.setAdapter(accountArrayAdapter);

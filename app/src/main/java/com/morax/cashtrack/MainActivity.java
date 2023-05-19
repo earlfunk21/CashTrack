@@ -1,6 +1,8 @@
 package com.morax.cashtrack;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvExpense;
     private TextView tvIncome;
 
+    private DrawerLayout drawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,20 +46,8 @@ public class MainActivity extends AppCompatActivity {
         tvExpense = findViewById(R.id.tv_expense);
         tvIncome = findViewById(R.id.tv_income);
         setDateAsYearly(tvExpense);
-
-        TextView tvSavings = findViewById(R.id.tv_savings);
-
-        BigDecimal sumExpense = transactionDao.getExpense();
-        BigDecimal sumIncome = transactionDao.getIncome();
-        if(sumExpense == null){
-            sumExpense = BigDecimal.valueOf(0);
-        }
-        if(sumIncome == null){
-            sumIncome = BigDecimal.valueOf(0);
-        }
-        String savings = String.valueOf(sumIncome.subtract(sumExpense));
-
-        tvSavings.setText(savings);
+        setSavings();
+        drawerLayout = findViewById(R.id.drawerLayout);
     }
 
     public void openNewTransaction(View view) {
@@ -71,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             transactionList.addAll(transactionDao.getTransactionDesc());
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public void setDateAsWeekly(View view) {
@@ -89,13 +82,14 @@ public class MainActivity extends AppCompatActivity {
         try {
             BigDecimal expense = transactionDao.getExpenseThisWeek(startOfWeek, endOfWeek);
             BigDecimal income = transactionDao.getIncomeThisWeek(startOfWeek, endOfWeek);
-            if(expense == null)
+            if (expense == null)
                 expense = BigDecimal.valueOf(0);
-            if(income == null)
+            if (income == null)
                 income = BigDecimal.valueOf(0);
             tvExpense.setText(CurrencyFormatter.convertFromString(expense));
             tvIncome.setText(CurrencyFormatter.convertFromString(income));
-        } catch (NullPointerException ignored){}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public void setDateAsMonthly(View view) {
@@ -116,13 +110,14 @@ public class MainActivity extends AppCompatActivity {
         try {
             BigDecimal expense = transactionDao.getExpenseThisMonth(startOfMonth, endOfMonth);
             BigDecimal income = transactionDao.getIncomeThisMonth(startOfMonth, endOfMonth);
-            if(expense == null)
+            if (expense == null)
                 expense = BigDecimal.valueOf(0);
-            if(income == null)
+            if (income == null)
                 income = BigDecimal.valueOf(0);
             tvExpense.setText(CurrencyFormatter.convertFromString(expense));
             tvIncome.setText(CurrencyFormatter.convertFromString(income));
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public void setDateAsYearly(View view) {
@@ -144,17 +139,45 @@ public class MainActivity extends AppCompatActivity {
         try {
             BigDecimal expense = transactionDao.getExpenseThisYear(startOfYear, endOfYear);
             BigDecimal income = transactionDao.getIncomeThisYear(startOfYear, endOfYear);
-            if(expense == null)
+            if (expense == null)
                 expense = BigDecimal.valueOf(0);
-            if(income == null)
+            if (income == null)
                 income = BigDecimal.valueOf(0);
             tvExpense.setText(CurrencyFormatter.convertFromString(expense));
             tvIncome.setText(CurrencyFormatter.convertFromString(income));
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public void openProfile(View view) {
         Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
         startActivity(intent);
+    }
+
+    private void setSavings() {
+        TextView tvSavings = findViewById(R.id.tv_savings);
+
+        BigDecimal sumExpense = transactionDao.getExpense();
+        BigDecimal sumIncome = transactionDao.getIncome();
+        if (sumExpense == null) {
+            sumExpense = BigDecimal.valueOf(0);
+        }
+        if (sumIncome == null) {
+            sumIncome = BigDecimal.valueOf(0);
+        }
+        String savings = String.valueOf(sumIncome.subtract(sumExpense));
+
+        tvSavings.setText(savings);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    public void openSidebar(View view) {
+        drawerLayout.openDrawer(GravityCompat.START);
     }
 }

@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileActivity"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".ProfileActivity">
 
     <LinearLayout
         android:id="@+id/toolbar"
@@ -36,31 +36,88 @@
             android:layout_weight="1"
             android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
-            android:text="Accounts"
+            android:text="Profile"
             android:textColor="@color/primary900"
             android:textSize="20sp" />
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/primary500"
-            android:src="@drawable/baseline_add_24"
-            android:onClick="addAccount"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="15dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_bold"
+                android:padding="5dp"
+                android:text="Accounts"
+                android:textColor="@color/primary700" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@color/primary500"
+                android:contentDescription="Add Account"
+                android:onClick="addAccount"
+                android:src="@drawable/baseline_add_24" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_account"
             android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:spanCount="4"
+            tools:listitem="@layout/account_item" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/account_item"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:orientation="horizontal"
+            android:paddingHorizontal="15dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/poppins_bold"
+                android:padding="5dp"
+                android:text="Categories"
+                android:textColor="@color/primary700" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@color/primary500"
+                android:contentDescription="Add Account"
+                android:onClick="addCategory"
+                android:src="@drawable/baseline_add_24" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_category"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:spanCount="4"
+            tools:listitem="@layout/account_item" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

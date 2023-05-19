@@ -14,23 +14,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.morax.cashtrack.R;
 import com.morax.cashtrack.database.AppDatabase;
-import com.morax.cashtrack.database.dao.AccountDao;
-import com.morax.cashtrack.database.entity.Account;
+import com.morax.cashtrack.database.dao.CategoryDao;
+import com.morax.cashtrack.database.entity.Category;
 
 import java.util.List;
 
-public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHolder> {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
     private Context context;
-    private List<Account> accountList;
+    private List<Category> categoryList;
 
-    public AccountAdapter(Context context, List<Account> accountList) {
+    public CategoryAdapter(Context context, List<Category> categoryList) {
         this.context = context;
-        this.accountList = accountList;
+        this.categoryList = categoryList;
     }
 
-    public void setAccountList(List<Account> accountList){
-        this.accountList = accountList;
+    public void setCategoryList(List<Category> categoryList){
+        this.categoryList = categoryList;
         notifyDataSetChanged();
     }
 
@@ -43,9 +43,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Account account = accountList.get(position);
+        Category account = categoryList.get(position);
         String accountName = account.name;
-        holder.tvAccountName.setText(accountName);
+        holder.tvCategoryName.setText(accountName);
         holder.ibDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,23 +56,23 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return accountList.size();
+        return categoryList.size();
     }
 
-    private void confirmDelete(Account account){
-        AccountDao accountDao = AppDatabase.getInstance(context).accountDao();
+    private void confirmDelete(Category category){
+        CategoryDao categoryDao = AppDatabase.getInstance(context).categoryDao();
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context, R.style.AlertDialogCustom);
         LayoutInflater inflater =  LayoutInflater.from(context);
         View dialogView = inflater.inflate(R.layout.pop_up_delete, null);
         TextView tvName = dialogView.findViewById(R.id.et_account_name_popup_delete);
-        tvName.setText(account.name);
+        tvName.setText(category.name);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Retrieve the text from the EditText
-                accountDao.delete(account);
-                setAccountList(accountDao.getAccounts());
+                categoryDao.delete(category);
+                setCategoryList(categoryDao.getCategories());
             }
         });
         dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -86,12 +86,12 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvAccountName;
+        public TextView tvCategoryName;
         public ImageButton ibDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvAccountName = itemView.findViewById(R.id.tv_account_name);
+            tvCategoryName = itemView.findViewById(R.id.tv_account_name);
             ibDelete = itemView.findViewById(R.id.ib_delete);
         }
     }
