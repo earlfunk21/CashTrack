@@ -9,11 +9,17 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.morax.cashtrack.adapter.TransactionAdapter;
 import com.morax.cashtrack.database.AppDatabase;
+import com.morax.cashtrack.database.dao.AccountDao;
 import com.morax.cashtrack.database.dao.TransactionDao;
+import com.morax.cashtrack.database.entity.Account;
+import com.morax.cashtrack.database.entity.Category;
 import com.morax.cashtrack.database.entity.Transaction;
 import com.morax.cashtrack.utils.CurrencyFormatter;
 
@@ -28,17 +34,23 @@ public class MainActivity extends AppCompatActivity {
     private List<Transaction> transactionList;
 
     private TransactionDao transactionDao;
+    private AccountDao accountDao;
     private TransactionAdapter transactionAdapter;
     private TextView tvExpense;
     private TextView tvIncome;
 
     private DrawerLayout drawerLayout;
 
+    private ArrayAdapter<Account> accountArrayAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         transactionDao = AppDatabase.getInstance(this).transactionDao();
+        accountDao = AppDatabase.getInstance(this).accountDao();
+
         initData();
         RecyclerView rvTransaction = findViewById(R.id.rv_transaction);
         transactionAdapter = new TransactionAdapter(this, transactionList);
@@ -48,6 +60,28 @@ public class MainActivity extends AppCompatActivity {
         setDateAsYearly(tvExpense);
         setSavings();
         drawerLayout = findViewById(R.id.drawerLayout);
+
+        Spinner spinner = findViewById(R.id.spinner_savings); // Replace `R.id.spinner` with the actual ID of your spinner
+        List<Account> accounts = accountDao.getAccounts();
+        accountArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, accounts);
+        accountArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(accountArrayAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Account selectedAccount = (Account) parent.getItemAtPosition(position);
+                setSavingsById(selectedAccount.id);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle case when no item is selected
+                accountArrayAdapter.clear();
+                List<Account> accounts = accountDao.getAccounts();
+                accountArrayAdapter.addAll(accounts);
+                accountArrayAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     public void openNewTransaction(View view) {
@@ -169,6 +203,23 @@ public class MainActivity extends AppCompatActivity {
 
         tvSavings.setText(savings);
     }
+    private void setSavingsById(long accountId) {
+        TextView tvSavings = findViewById(R.id.tv_savings);
+
+        BigDecimal sumExpense = transactionDao.getExpenseByAccountId(accountId);
+        BigDecimal sumIncome = transactionDao.getIncomeByAccountId(accountId);
+        if (sumExpense == null) {
+            sumExpense = BigDecimal.valueOf(0);
+        }
+        if (sumIncome == null) {
+            sumIncome = BigDecimal.valueOf(0);
+        }
+        String savings = String.valueOf(sumIncome.subtract(sumExpense));
+
+        tvSavings.setText(savings);
+    }
+
+
 
     @Override
     protected void onPause() {
@@ -180,4 +231,5 @@ public class MainActivity extends AppCompatActivity {
     public void openSidebar(View view) {
         drawerLayout.openDrawer(GravityCompat.START);
     }
+
 }

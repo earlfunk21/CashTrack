@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".NewTransactionActivity">
+    tools:context=".TransferActivity">
 
     <LinearLayout
         android:id="@+id/toolbar"
@@ -36,18 +36,9 @@
             android:layout_weight="1"
             android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
-            android:text="@string/new_transaction"
+            android:text="Transfer"
             android:textColor="@color/primary900"
             android:textSize="20sp" />
-
-        <ImageButton
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
-            android:scaleType="fitCenter"
-            android:padding="10dp"
-            android:onClick="openTransfer"
-            android:src="@drawable/baseline_swap_horizontal_circle_24"
-            android:background="@color/transparent"/>
     </LinearLayout>
 
     <LinearLayout
@@ -59,55 +50,11 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_save"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <RadioGroup
-            android:id="@+id/report_rg"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:measureWithLargestChild="true"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/weekly_rb"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_radio_button"
-                android:button="@null"
-                android:checked="true"
-                android:drawableStart="@drawable/tab_item_icon"
-                android:elevation="4dp"
-                android:fontFamily="@font/poppins"
-                android:gravity="center"
-                android:onClick="setTypeExpense"
-                android:padding="10dp"
-                android:text="Expense"
-                android:textColor="@drawable/text_color_rb" />
-
-            <RadioButton
-                android:id="@+id/monthly_rb"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_radio_button"
-                android:button="@null"
-                android:drawableStart="@drawable/tab_item_icon"
-                android:elevation="4dp"
-                android:fontFamily="@font/poppins"
-                android:gravity="center"
-                android:onClick="setTypeIncome"
-                android:padding="10dp"
-                android:text="Income"
-                android:textColor="@drawable/text_color_rb" />
-        </RadioGroup>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
-            android:text="Account"
+            android:text="From Account"
             android:textColor="@color/disabled_text"
             android:textSize="14sp" />
 
@@ -117,12 +64,31 @@
             android:layout_marginBottom="30dp">
 
             <Spinner
-                android:id="@+id/spinner_account"
+                android:id="@+id/spinner_account_transfer_from"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:text="To Account"
+            android:textColor="@color/disabled_text"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp">
+
+            <Spinner
+                android:id="@+id/spinner_account_transfer_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -146,7 +112,7 @@
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/et_amount"
+                android:id="@+id/et_amount_transfer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
@@ -166,27 +132,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
-            android:text="Category"
-            android:textColor="@color/disabled_text"
-            android:textSize="14sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp">
-
-            <Spinner
-                android:id="@+id/spinner_category"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/categories" />
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
             android:text="Date"
             android:textColor="@color/disabled_text"
             android:textSize="14sp" />
@@ -200,7 +145,7 @@
             android:focusable="true">
 
             <TextView
-                android:id="@+id/tv_trans_date"
+                android:id="@+id/tv_trans_date_transfer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_bold"
@@ -229,7 +174,7 @@
             android:layout_weight="1">
 
             <EditText
-                android:id="@+id/et_note"
+                android:id="@+id/et_note_transfer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/disabled_text"

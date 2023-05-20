@@ -18,7 +18,6 @@ import com.morax.cashtrack.database.dao.AccountDao;
 import com.morax.cashtrack.database.dao.CategoryDao;
 import com.morax.cashtrack.database.dao.TransactionDao;
 import com.morax.cashtrack.database.entity.Account;
-import com.morax.cashtrack.database.entity.Category;
 import com.morax.cashtrack.database.entity.Transaction;
 import com.morax.cashtrack.utils.Utils;
 
@@ -27,63 +26,53 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class NewTransactionActivity extends AppCompatActivity {
+public class TransferActivity extends AppCompatActivity {
 
     private TextView tvTransDate;
     private EditText etAmount, etNote;
-    private String strCategory;
-    private long accountId;
+    private long accountIdFrom, accountIdTo;
     private Date date;
     private TransactionDao transactionDao;
-    private CategoryDao categoryDao;
     private AccountDao accountDao;
-    private String transactionType = "Expense";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_transaction);
+        setContentView(R.layout.activity_transfer);
         transactionDao = AppDatabase.getInstance(this).transactionDao();
-        categoryDao = AppDatabase.getInstance(this).categoryDao();
         accountDao = AppDatabase.getInstance(this).accountDao();
 
-        etAmount = findViewById(R.id.et_amount);
-        tvTransDate = findViewById(R.id.tv_trans_date);
-        etNote = findViewById(R.id.et_note);
+        etAmount = findViewById(R.id.et_amount_transfer);
+        tvTransDate = findViewById(R.id.tv_trans_date_transfer);
+        etNote = findViewById(R.id.et_note_transfer);
 
-        // Init Date
-        date = Calendar.getInstance().getTime();
-        tvTransDate.setText(Utils.formatDate(date));
-
-        // Spinner Category
-        Spinner spinnerCategory = findViewById(R.id.spinner_category);
-        List<Category> categories = categoryDao.getCategories();
-        ArrayAdapter<Category> categoryArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_layout, categories);
-        categoryArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerCategory.setAdapter(categoryArrayAdapter);
-        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                strCategory = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        // Spinner Category
-        Spinner spinner = findViewById(R.id.spinner_account); // Replace `R.id.spinner` with the actual ID of your spinner
         List<Account> accounts = accountDao.getAccounts();
         ArrayAdapter<Account> accountArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_layout, accounts);
+
+        Spinner spinnerFrom = findViewById(R.id.spinner_account_transfer_from);
         accountArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinner.setAdapter(accountArrayAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerFrom.setAdapter(accountArrayAdapter);
+        spinnerFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Account selectedAccount = (Account) parent.getItemAtPosition(position);
-                accountId = selectedAccount.id;
+                accountIdFrom = selectedAccount.id;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle case when no item is selected
+            }
+        });
+
+        Spinner spinnerTo = findViewById(R.id.spinner_account_transfer_to);
+        accountArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerTo.setAdapter(accountArrayAdapter);
+        spinnerTo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Account selectedAccount = (Account) parent.getItemAtPosition(position);
+                accountIdTo = selectedAccount.id;
             }
 
             @Override
@@ -115,27 +104,18 @@ public class NewTransactionActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-
     public void addNewTransaction(View view) {
         BigDecimal amount = BigDecimal.valueOf(Long.parseLong(etAmount.getText().toString()));
         String note = etNote.getText().toString();
-        Transaction transaction = new Transaction(accountId, strCategory, date, amount, note);
-        transaction.type = transactionType;
+        Transaction transaction = new Transaction(accountIdFrom, "Transfer", date, amount, note);
+        transaction.type = "Expense";
         transactionDao.insert(transaction);
+
+        transaction = new Transaction(accountIdTo, "Transfer", date, amount, note);
+        transaction.type = "Income";
+        transactionDao.insert(transaction);
+
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    public void setTypeIncome(View view) {
-        transactionType = "Income";
-    }
-
-    public void setTypeExpense(View view) {
-        transactionType = "Expense";
-    }
-
-    public void openTransfer(View view) {
-        Intent intent = new Intent(NewTransactionActivity.this, TransferActivity.class);
         startActivity(intent);
     }
 }

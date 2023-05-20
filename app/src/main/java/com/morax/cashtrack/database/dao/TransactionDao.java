@@ -21,7 +21,7 @@ public interface TransactionDao {
     @Insert
     void insertAll(Transaction... transactions);
 
-    @Query("SELECT * FROM `Transaction` ORDER BY date DESC")
+    @Query("SELECT * FROM `Transaction` WHERE category != 'Transfer' ORDER BY date DESC")
     List<Transaction> getTransactionDesc();
 
     @Query("DELETE FROM `Transaction`")
@@ -35,6 +35,12 @@ public interface TransactionDao {
 
     @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income'")
     BigDecimal getIncome();
+
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Expense' AND accountId = :accountId")
+    BigDecimal getExpenseByAccountId(long accountId);
+
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income' AND accountId = :accountId")
+    BigDecimal getIncomeByAccountId(long accountId);
 
     @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startWeek and date <= :endWeek and type = 'Expense'")
     BigDecimal getExpenseThisWeek(Date startWeek, Date endWeek);
