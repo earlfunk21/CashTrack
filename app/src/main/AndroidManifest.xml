@@ -16,9 +16,6 @@
             android:name=".TransferActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
-        <activity
             android:name=".TransactionDetailsActivity"
             android:exported="false" />
         <activity

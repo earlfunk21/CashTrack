@@ -46,6 +46,10 @@ public class TransferActivity extends AppCompatActivity {
         tvTransDate = findViewById(R.id.tv_trans_date_transfer);
         etNote = findViewById(R.id.et_note_transfer);
 
+        // Init Date
+        date = Calendar.getInstance().getTime();
+        tvTransDate.setText(Utils.formatDate(date));
+
         List<Account> accounts = accountDao.getAccounts();
         ArrayAdapter<Account> accountArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_layout, accounts);
 

@@ -46,12 +46,6 @@
                 android:textColor="@color/primary900"
                 android:textSize="20sp" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="40dp"
-                android:layout_height="42dp"
-                android:onClick="openProfile"
-                android:src="@drawable/avatar" />
-
         </LinearLayout>
 
         <LinearLayout

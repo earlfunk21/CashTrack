@@ -30,33 +30,33 @@ public interface TransactionDao {
     @Query("SELECT SUM(amount) FROM `Transaction`")
     BigDecimal getSumOfAmount();
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Expense'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Expense' AND category != 'Transfer'")
     BigDecimal getExpense();
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income' AND category != 'Transfer'")
     BigDecimal getIncome();
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Expense' AND accountId = :accountId")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Expense' AND accountId = :accountId  AND category != 'Transfer'")
     BigDecimal getExpenseByAccountId(long accountId);
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income' AND accountId = :accountId")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income' AND accountId = :accountId AND category != 'Transfer'")
     BigDecimal getIncomeByAccountId(long accountId);
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startWeek and date <= :endWeek and type = 'Expense'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startWeek and date <= :endWeek and type = 'Expense' AND category != 'Transfer'")
     BigDecimal getExpenseThisWeek(Date startWeek, Date endWeek);
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startMonth and date <= :endMonth  and type = 'Expense'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startMonth and date <= :endMonth  and type = 'Expense' AND category != 'Transfer'")
     BigDecimal getExpenseThisMonth(Date startMonth, Date endMonth);
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startYear and date <= :endYear and type = 'Expense'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startYear and date <= :endYear and type = 'Expense' AND category != 'Transfer'")
     BigDecimal getExpenseThisYear(Date startYear, Date endYear);
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startWeek and date <= :endWeek and type = 'Income'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startWeek and date <= :endWeek and type = 'Income' AND category != 'Transfer'")
     BigDecimal getIncomeThisWeek(Date startWeek, Date endWeek);
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startMonth and date <= :endMonth  and type = 'Income'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startMonth and date <= :endMonth  and type = 'Income' AND category != 'Transfer'")
     BigDecimal getIncomeThisMonth(Date startMonth, Date endMonth);
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startYear and date <= :endYear and type = 'Income'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startYear and date <= :endYear and type = 'Income' AND category != 'Transfer'")
     BigDecimal getIncomeThisYear(Date startYear, Date endYear);
 }

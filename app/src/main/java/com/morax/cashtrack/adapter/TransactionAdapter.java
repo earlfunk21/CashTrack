@@ -50,13 +50,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         Transaction transaction = transactionList.get(position);
         String amount = CurrencyFormatter.convertFromString(transaction.amount);
         String category = transaction.category;
-        int thumbnail = Utils.getCategoryThumbnail(category);
-        holder.getIvCategoryThumbnail().setImageResource(thumbnail);
         if (transaction.type == null) transaction.type = "Expense";
         if (transaction.type.equals("Expense")) {
             holder.getTvAmount().setTextColor(ContextCompat.getColor(context, android.R.color.holo_red_light));
             amount = "-" + amount;
         }
+        holder.getTvNote().setText(transaction.note);
         holder.getTvAmount().setText(amount);
         holder.getTvDate().setText(Utils.formatDate(transaction.date));
         holder.getTvCategory().setText(category);
@@ -78,8 +77,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tvAmount, tvCategory, tvDate;
-        private ImageView ivCategoryThumbnail;
+        private TextView tvAmount, tvCategory, tvDate, tvNote;
 
         private CardView cvTransactionItem;
 
@@ -89,7 +87,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             tvAmount = itemView.findViewById(R.id.tv_amount);
             tvCategory = itemView.findViewById(R.id.tv_category);
             tvDate = itemView.findViewById(R.id.tv_date);
-            ivCategoryThumbnail = itemView.findViewById(R.id.iv_category_thumbnail1);
+            tvNote = itemView.findViewById(R.id.tv_note);
             cvTransactionItem = itemView.findViewById(R.id.cv_transaction_item);
         }
 
@@ -105,8 +103,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             return tvDate;
         }
 
-        public ImageView getIvCategoryThumbnail() {
-            return ivCategoryThumbnail;
+        public TextView getTvNote() {
+            return tvNote;
         }
 
         public CardView getCvTransactionItem() {
