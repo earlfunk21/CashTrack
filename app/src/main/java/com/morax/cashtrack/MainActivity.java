@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private CategoryAdapter categoryAdapter;
     private List<Account> accountList;
     private List<Category> categoryList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,14 +75,21 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner spinner = findViewById(R.id.spinner_savings); // Replace `R.id.spinner` with the actual ID of your spinner
         List<Account> accounts = accountDao.getAccounts();
+        Account mainSavings = new Account("Main Savings");
+        accounts.add(mainSavings);
         accountArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, accounts);
         accountArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(accountArrayAdapter);
+        spinner.setSelection(accounts.size() -  1);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Account selectedAccount = (Account) parent.getItemAtPosition(position);
-                setSavingsById(selectedAccount.id);
+                if (selectedAccount.name.equals("Main Savings")) {
+                    setSavings();
+                } else {
+                    setSavingsById(selectedAccount.id);
+                }
             }
 
             @Override
@@ -222,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
         tvSavings.setText(savings);
     }
+
     private void setSavingsById(long accountId) {
         TextView tvSavings = findViewById(R.id.tv_savings);
 
@@ -301,5 +310,35 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
 
+    }
+
+    public void resetData(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        builder.setCancelable(true);
+        builder.setTitle("Are you sure?");
+        builder.setMessage("You want to delete all data?");
+        builder.setPositiveButton("Confirm",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        transactionDao.deleteAll();
+                        accountDao.deleteAll();
+                        categoryDao.deleteAll();
+                        Intent intent = getIntent();
+                        overridePendingTransition(0, 0);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        finish();
+                        overridePendingTransition(0, 0);
+                        startActivity(intent);
+                    }
+                });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

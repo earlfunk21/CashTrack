@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TransactionDetailsActivity"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".TransactionDetailsActivity">
 
     <LinearLayout
         android:id="@+id/toolbar"
@@ -27,76 +27,81 @@
             android:clickable="true"
             android:focusable="true"
             android:onClick="goBack"
-            android:src="@drawable/baseline_arrow_back_ios_new_24"/>
+            android:src="@drawable/baseline_arrow_back_ios_new_24" />
 
         <TextView
             android:id="@+id/toolbarTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
             android:text="@string/transaction_details"
-            android:fontFamily="@font/poppins_semibold"
             android:textColor="@color/primary900"
             android:textSize="20sp" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="40dp"
-            android:layout_height="42dp"
-            android:src="@drawable/avatar" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/layout2">
+
         <TextView
             android:id="@+id/tv_category_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_bold"
             android:textColor="@color/primary500"
             android:textSize="24sp"
-            android:fontFamily="@font/poppins_bold"
-            tools:text="Sneakers"/>
+            tools:text="Sneakers" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="IDR"
+                android:text="PHP"
                 android:textColor="@color/primary900"
                 android:textSize="20sp" />
+
             <TextView
                 android:id="@+id/tv_amount_details"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingHorizontal="20dp"
-                tools:text="200,0000,000"
-                android:textColor="@color/primary700"
+                android:fontFamily="@font/poppins_bold"
                 android:gravity="right"
+                android:paddingHorizontal="20dp"
+                android:textColor="@color/primary700"
                 android:textSize="20sp"
-                android:fontFamily="@font/poppins_bold" />
+                tools:text="200,0000,000" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="15dp"
-                app:cardMaxElevation="4dp"
                 android:layout_margin="4dp"
-                app:cardBackgroundColor="@color/white">
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="15dp"
+                app:cardMaxElevation="4dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="20dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -104,38 +109,68 @@
                         android:text="Note:"
                         android:textColor="@color/disabled_text"
                         android:textSize="14sp" />
+
                     <ScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scrollbars="none">
 
                         <TextView
-                            android:textColor="@color/black"
                             android:id="@+id/tv_note_details"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins"
-                            android:maxHeight="400dp"
                             android:lineSpacingExtra="10dp"
+                            android:textColor="@color/black"
                             android:textSize="18sp"
-                            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.">
-                        </TextView>
+                            tools:text="Lorem ipsu\n\nm dolor sit amet,  ads asd \nconsectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
+
+
                     </ScrollView>
+
                     <TextView
                         android:id="@+id/tv_date_details"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="end"
-                        tools:text="01/02/2003"
+                        android:paddingVertical="20dp"
                         android:textColor="@color/disabled_text"
                         android:textSize="14sp"
-                        android:paddingVertical="20dp"/>
+                        tools:text="01/02/2003" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_save_bg"
+            android:backgroundTint="@android:color/holo_green_light"
+            android:text="Edit"
+            android:textColor="@color/white"
+            android:onClick="editTransaction"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_save_bg"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:text="Delete"
+            android:onClick="deleteTransaction"
+            android:textColor="@color/white" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

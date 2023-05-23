@@ -27,6 +27,12 @@ public interface TransactionDao {
     @Query("DELETE FROM `Transaction`")
     void deleteAll();
 
+    @Query("SELECT * FROM `Transaction` WHERE id = :id")
+    Transaction getTransactionById(long id);
+
+    @Delete
+    void delete(Transaction transaction);
+
     @Query("SELECT SUM(amount) FROM `Transaction`")
     BigDecimal getSumOfAmount();
 
@@ -36,10 +42,10 @@ public interface TransactionDao {
     @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income' AND category != 'Transfer'")
     BigDecimal getIncome();
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Expense' AND accountId = :accountId  AND category != 'Transfer'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Expense' AND accountId = :accountId")
     BigDecimal getExpenseByAccountId(long accountId);
 
-    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income' AND accountId = :accountId AND category != 'Transfer'")
+    @Query("SELECT SUM(amount) FROM `Transaction` WHERE type = 'Income' AND accountId = :accountId")
     BigDecimal getIncomeByAccountId(long accountId);
 
     @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startWeek and date <= :endWeek and type = 'Expense' AND category != 'Transfer'")

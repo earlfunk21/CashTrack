@@ -18,6 +18,8 @@ public interface AccountDao {
     @Insert
     void insert(Account account);
 
+    @Query("DELETE FROM Account")
+    void deleteAll();
     @Delete
     void delete(Account account);
 
@@ -28,7 +30,7 @@ public interface AccountDao {
     List<String> getAccountNames();
 
     @Query("SELECT * FROM Account WHERE id = :id")
-    List<Account> getAccountById(long id);
+    Account getAccountById(long id);
 
     @Query("SELECT * FROM Account WHERE name = :name")
     List<Account> getAccountByName(long name);

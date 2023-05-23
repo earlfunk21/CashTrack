@@ -93,4 +93,14 @@
             app:spanCount="4"
             tools:listitem="@layout/account_item" />
     </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/btn_save_bg"
+        android:backgroundTint="@android:color/holo_red_light"
+        android:textColor="@color/white"
+        android:text="RESET ALL DATA"
+        android:onClick="resetData"/>
+
 </LinearLayout>
