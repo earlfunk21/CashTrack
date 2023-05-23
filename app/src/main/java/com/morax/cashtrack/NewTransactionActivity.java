@@ -1,16 +1,9 @@
 package com.morax.cashtrack;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import android.app.DatePickerDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,7 +20,6 @@ import com.morax.cashtrack.database.dao.TransactionDao;
 import com.morax.cashtrack.database.entity.Account;
 import com.morax.cashtrack.database.entity.Category;
 import com.morax.cashtrack.database.entity.Transaction;
-import com.morax.cashtrack.utils.NotificationReceiver;
 import com.morax.cashtrack.utils.Utils;
 
 import java.math.BigDecimal;
