@@ -34,13 +34,11 @@ public class EditTransactionActivity extends AppCompatActivity {
 
     private TextView tvTransDate;
     private EditText etAmount, etNote;
-    private String strCategory;
-    private long accountId;
     private Date date;
     private TransactionDao transactionDao;
     private CategoryDao categoryDao;
     private AccountDao accountDao;
-    private String transactionType = "Expense";
+    private String transactionType;
     private Transaction transaction;
 
     @Override
@@ -61,57 +59,23 @@ public class EditTransactionActivity extends AppCompatActivity {
 
         // Init Date
         tvTransDate.setText(Utils.formatDate(transaction.date));
-        etAmount.setText(CurrencyFormatter.convertFromString(transaction.amount));
+        date = transaction.date;
+        etAmount.setText(String.valueOf(transaction.amount));
         etNote.setText(transaction.note);
         RadioGroup radioGroup = findViewById(R.id.rg_type);
-
+        transactionType = transaction.type;
         if (transaction.type.equals("Expense")) {
             radioGroup.check(R.id.rb_expense);
         } else {
             radioGroup.check(R.id.rb_income);
         }
 
-        // Spinner Category
-        Spinner spinnerCategory = findViewById(R.id.spinner_category);
-        List<Category> categories = categoryDao.getCategories();
-        ArrayAdapter<Category> categoryArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_layout, categories);
-        categoryArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerCategory.setAdapter(categoryArrayAdapter);
-        Category category = categoryDao.getCategoryByName(transaction.category);
-        int selectedCategoryPosition = categories.indexOf(category);
-        spinnerCategory.setSelection(selectedCategoryPosition);
-        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                strCategory = adapterView.getItemAtPosition(i).toString();
-            }
+        TextView tvCategory = findViewById(R.id.tv_category_edit);
+        TextView tvAccount = findViewById(R.id.tv_account_name_edit);
+        tvCategory.setText(transaction.category);
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        // Spinner Account
-        Spinner spinner = findViewById(R.id.spinner_account); // Replace `R.id.spinner` with the actual ID of your spinner
-        List<Account> accounts = accountDao.getAccounts();
-        ArrayAdapter<Account> accountArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_dropdown_layout, accounts);
-        accountArrayAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinner.setAdapter(accountArrayAdapter);
         Account account = accountDao.getAccountById(transaction.accountId);
-        spinner.setSelection(accountArrayAdapter.getPosition(account));
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Account selectedAccount = (Account) parent.getItemAtPosition(position);
-                accountId = selectedAccount.id;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Handle case when no item is selected
-            }
-        });
+        tvAccount.setText(account.name);
     }
 
     public void goBack(View view) {
@@ -136,17 +100,6 @@ public class EditTransactionActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
-
-    public void addNewTransaction(View view) {
-        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(etAmount.getText().toString()));
-        String note = etNote.getText().toString();
-        Transaction transaction = new Transaction(accountId, strCategory, date, amount, note);
-        transaction.type = transactionType;
-        transactionDao.insert(transaction);
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
     public void setTypeIncome(View view) {
         transactionType = "Income";
     }
@@ -157,6 +110,18 @@ public class EditTransactionActivity extends AppCompatActivity {
 
     public void openTransfer(View view) {
         Intent intent = new Intent(EditTransactionActivity.this, TransferActivity.class);
+        startActivity(intent);
+    }
+
+    public void updateTransaction(View view) {
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(etAmount.getText().toString()));
+        String note = etNote.getText().toString();
+        transaction.date = date;
+        transaction.amount = amount;
+        transaction.note = note;
+        transaction.type = transactionType;
+        transactionDao.update(transaction);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }

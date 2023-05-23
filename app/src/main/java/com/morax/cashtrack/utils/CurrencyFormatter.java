@@ -12,4 +12,5 @@ public class CurrencyFormatter {
         DecimalFormat decimalFormat = new DecimalFormat(pattern, symbols);
         return decimalFormat.format(value);
     }
+
 }

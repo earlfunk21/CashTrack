@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.morax.cashtrack.database.entity.Transaction;
 
@@ -26,6 +27,20 @@ public interface TransactionDao {
 
     @Query("DELETE FROM `Transaction`")
     void deleteAll();
+
+    @Query("SELECT * FROM `Transaction` WHERE category != 'Transfer' ORDER BY date DESC LIMIT :limit")
+    List<Transaction> getTransactionWithLimit(int limit);
+
+    @Query("SELECT * FROM `transaction` WHERE category = :category AND accountId = :accountId")
+    List<Transaction> getTransactionByAccountIdWithCategory(String category, long accountId);
+
+    @Query("SELECT * FROM `transaction` WHERE category = :category")
+    List<Transaction> getTransactionByCategory(String category);
+
+    @Query("SELECT * FROM `transaction` WHERE accountId = :accountId")
+    List<Transaction> getTransactionByAccountId(long accountId);
+    @Update
+    void update(Transaction transaction);
 
     @Query("SELECT * FROM `Transaction` WHERE id = :id")
     Transaction getTransactionById(long id);

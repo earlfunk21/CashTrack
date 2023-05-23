@@ -32,8 +32,8 @@
                 android:layout_height="38dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:src="@drawable/baseline_menu_24"
-                android:onClick="openSidebar"/>
+                android:onClick="openSidebar"
+                android:src="@drawable/baseline_menu_24" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
@@ -260,12 +260,29 @@
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Latest Transaction"
-                android:textColor="@color/primary900" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Latest Transaction"
+                    android:textColor="@color/primary900" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:background="@drawable/btn_save_bg"
+                    android:text="See all"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:onClick="openListTransactions"/>
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -301,6 +318,7 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start">
-        <include layout="@layout/sidebar"/>
+
+        <include layout="@layout/sidebar" />
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

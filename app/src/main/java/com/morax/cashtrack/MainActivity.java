@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView rvTransaction = findViewById(R.id.rv_transaction);
         transactionAdapter = new TransactionAdapter(this, transactionList);
         rvTransaction.setAdapter(transactionAdapter);
+
         tvExpense = findViewById(R.id.tv_expense);
         tvIncome = findViewById(R.id.tv_income);
         setDateAsYearly(tvExpense);
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         if (transactionModel != null) transactionDao.insert(transactionModel);
 
         try {
-            transactionList.addAll(transactionDao.getTransactionDesc());
+            transactionList.addAll(transactionDao.getTransactionWithLimit(5));
         } catch (NullPointerException ignored) {
         }
     }
@@ -340,5 +341,10 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public void openListTransactions(View view) {
+        Intent intent = new Intent(MainActivity.this, TransactionsActivity.class);
+        startActivity(intent);
     }
 }

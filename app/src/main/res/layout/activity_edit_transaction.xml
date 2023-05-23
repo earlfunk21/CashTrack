@@ -43,11 +43,11 @@
         <ImageButton
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
-            android:scaleType="fitCenter"
-            android:padding="10dp"
+            android:background="@color/transparent"
             android:onClick="openTransfer"
-            android:src="@drawable/baseline_swap_horizontal_circle_24"
-            android:background="@color/transparent"/>
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_swap_horizontal_circle_24" />
     </LinearLayout>
 
     <LinearLayout
@@ -116,10 +116,42 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp">
 
-            <Spinner
-                android:id="@+id/spinner_account"
+            <TextView
+                android:id="@+id/tv_account_name_edit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:entries="@array/categories"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@color/primary900"
+                android:textColorHint="@color/disabled_text"
+                android:textSize="16sp"
+                tools:text="Account" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:text="Category"
+            android:textColor="@color/disabled_text"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp">
+
+            <TextView
+                android:id="@+id/tv_category_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/categories"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="@color/primary900"
+                android:textColorHint="@color/disabled_text"
+                android:textSize="16sp"
+                tools:text="Category" />
 
         </LinearLayout>
 
@@ -162,26 +194,6 @@
                 tools:text="3,800,000" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins"
-            android:text="Category"
-            android:textColor="@color/disabled_text"
-            android:textSize="14sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp">
-
-            <Spinner
-                android:id="@+id/spinner_category"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/categories" />
-
-        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -251,8 +263,8 @@
         android:layout_margin="30dp"
         android:background="@drawable/btn_save_bg"
         android:fontFamily="@font/poppins_semibold"
-        android:onClick="addNewTransaction"
-        android:text="Save"
+        android:onClick="updateTransaction"
+        android:text="Update"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent" />
