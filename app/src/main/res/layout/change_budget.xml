@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/pop_up_dialog"
+    android:padding="10dp"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_bold"
+        android:text="You want to change your budget?"
+        android:textColor="@color/primary500"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/et_account_name_popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a budget"
+        android:textColor="@color/black"
+        android:textColorHint="@color/disabled_text"
+        android:paddingVertical="10dp"
+        android:background="@drawable/line_btn"/>
+</LinearLayout>

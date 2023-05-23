@@ -2,18 +2,25 @@ package com.morax.cashtrack;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -54,12 +61,19 @@ public class MainActivity extends AppCompatActivity {
     private CategoryAdapter categoryAdapter;
     private List<Account> accountList;
     private List<Category> categoryList;
+    private Button btnBudget;
+
+    private double budget;
+    private SharedPreferences budgetPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        budgetPrefs = getSharedPreferences("budgetPrefs", MODE_PRIVATE);
+        budget = budgetPrefs.getFloat("budget", 1000);
+        btnBudget = findViewById(R.id.btn_budget);
+        btnBudget.setText(String.valueOf(budget));
         transactionDao = AppDatabase.getInstance(this).transactionDao();
         accountDao = AppDatabase.getInstance(this).accountDao();
 
@@ -115,6 +129,43 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView rvCategory = findViewById(R.id.rv_category);
         categoryAdapter = new CategoryAdapter(this, categoryList);
         rvCategory.setAdapter(categoryAdapter);
+
+
+
+
+        float budget = budgetPrefs.getFloat("budget", 1000);
+        BigDecimal sumExpense = transactionDao.getExpense();
+        BigDecimal sumIncome = transactionDao.getIncome();
+        if (sumExpense == null) {
+            sumExpense = BigDecimal.valueOf(0);
+        }
+        if (sumIncome == null) {
+            sumIncome = BigDecimal.valueOf(0);
+        }
+        BigDecimal sum = sumIncome.subtract(sumExpense);
+        BigDecimal bdBudget = BigDecimal.valueOf(budget); // Replace `yourBudgetValue` with the actual budget value
+
+        if (sum.compareTo(bdBudget) > 0) {
+            // You have reached your budget limit
+            // Perform actions or logic here
+            createNotification();
+        }
+    }
+    private void createNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("My Notification", "CashTrack Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+        // Create an intent to launch the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My Notification");
+        builder.setContentTitle("CashTrack Alert!");
+        builder.setContentText("You have reached your budget limit.");
+        builder.setSmallIcon(R.drawable.money);
+        builder.setAutoCancel(true);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
+        managerCompat.notify(1, builder.build());
     }
 
     public void openNewTransaction(View view) {
@@ -346,5 +397,33 @@ public class MainActivity extends AppCompatActivity {
     public void openListTransactions(View view) {
         Intent intent = new Intent(MainActivity.this, TransactionsActivity.class);
         startActivity(intent);
+    }
+
+    public void changeBudget(View view){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.change_budget, null);
+        dialogBuilder.setView(dialogView);
+        EditText editText = dialogView.findViewById(R.id.et_account_name_popup);
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Retrieve the text from the EditText
+                String enteredText = editText.getText().toString();
+                btnBudget.setText(enteredText);
+                SharedPreferences.Editor editor = budgetPrefs.edit();
+                editor.putFloat("budget", Float.parseFloat(enteredText));
+                editor.apply();
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+
     }
 }
