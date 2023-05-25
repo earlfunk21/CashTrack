@@ -38,6 +38,7 @@ import com.morax.cashtrack.database.entity.Transaction;
 import com.morax.cashtrack.utils.CurrencyFormatter;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -71,9 +72,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         budgetPrefs = getSharedPreferences("budgetPrefs", MODE_PRIVATE);
-        budget = budgetPrefs.getFloat("budget", 1000);
+        budget = budgetPrefs.getFloat("budget", -1);
         btnBudget = findViewById(R.id.btn_budget);
-        btnBudget.setText(String.valueOf(budget));
+
+        if (budget < 0) {
+            changeBudget(btnBudget);
+        }
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+        btnBudget.setText(decimalFormat.format(budget));
         transactionDao = AppDatabase.getInstance(this).transactionDao();
         accountDao = AppDatabase.getInstance(this).accountDao();
 
@@ -88,14 +94,14 @@ public class MainActivity extends AppCompatActivity {
         setSavings();
         drawerLayout = findViewById(R.id.drawerLayout);
 
-        Spinner spinner = findViewById(R.id.spinner_savings); // Replace `R.id.spinner` with the actual ID of your spinner
+        Spinner spinner = findViewById(R.id.spinner_savings);
         List<Account> accounts = accountDao.getAccounts();
         Account mainSavings = new Account("Main Savings");
         accounts.add(mainSavings);
         accountArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, accounts);
         accountArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(accountArrayAdapter);
-        spinner.setSelection(accounts.size() -  1);
+        spinner.setSelection(accounts.size() - 1);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -130,34 +136,24 @@ public class MainActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(this, categoryList);
         rvCategory.setAdapter(categoryAdapter);
 
-
-
-
-        float budget = budgetPrefs.getFloat("budget", 1000);
+        float budget = budgetPrefs.getFloat("budget", 0);
         BigDecimal sumExpense = transactionDao.getExpense();
-        BigDecimal sumIncome = transactionDao.getIncome();
         if (sumExpense == null) {
-            sumExpense = BigDecimal.valueOf(0);
+            sumExpense = BigDecimal.ZERO;
         }
-        if (sumIncome == null) {
-            sumIncome = BigDecimal.valueOf(0);
-        }
-        BigDecimal sum = sumIncome.subtract(sumExpense);
-        BigDecimal bdBudget = BigDecimal.valueOf(budget); // Replace `yourBudgetValue` with the actual budget value
-
-        if (sum.compareTo(bdBudget) > 0) {
-            // You have reached your budget limit
-            // Perform actions or logic here
+        BigDecimal bdBudget = BigDecimal.valueOf(budget);
+        if (sumExpense.compareTo(bdBudget) > 0) {
             createNotification();
         }
     }
+
     private void createNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("My Notification", "CashTrack Notification", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
-        // Create an intent to launch the notification
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My Notification");
         builder.setContentTitle("CashTrack Alert!");
         builder.setContentText("You have reached your budget limit.");
@@ -178,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Transaction transactionModel = (Transaction) intent.getSerializableExtra("model");
         if (transactionModel != null) transactionDao.insert(transactionModel);
-
         try {
             transactionList.addAll(transactionDao.getTransactionWithLimit(5));
         } catch (NullPointerException ignored) {
@@ -189,12 +184,8 @@ public class MainActivity extends AppCompatActivity {
         // Current Date
 
         Calendar calendar = Calendar.getInstance();
-
-        // Calculate the start of the current week (Sunday)
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         Date startOfWeek = calendar.getTime();
-
-        // Calculate the end of the current week (Saturday)
         calendar.add(Calendar.DAY_OF_WEEK, 6);
         Date endOfWeek = calendar.getTime();
         try {
@@ -376,6 +367,9 @@ public class MainActivity extends AppCompatActivity {
                         transactionDao.deleteAll();
                         accountDao.deleteAll();
                         categoryDao.deleteAll();
+                        SharedPreferences.Editor editor = budgetPrefs.edit();
+                        editor.putFloat("budget", -1);
+                        editor.apply();
                         Intent intent = getIntent();
                         overridePendingTransition(0, 0);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -399,7 +393,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void changeBudget(View view){
+    public void changeBudget(View view) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.change_budget, null);
