@@ -1,12 +1,14 @@
 package com.morax.cashtrack.database.dao;
 
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.morax.cashtrack.database.entity.IncomeExpense;
 import com.morax.cashtrack.database.entity.Transaction;
 
 import java.math.BigDecimal;
@@ -39,6 +41,7 @@ public interface TransactionDao {
 
     @Query("SELECT * FROM `transaction` WHERE accountId = :accountId")
     List<Transaction> getTransactionByAccountId(long accountId);
+
     @Update
     void update(Transaction transaction);
 
@@ -80,4 +83,10 @@ public interface TransactionDao {
 
     @Query("SELECT SUM(amount) FROM `Transaction` WHERE date >= :startYear and date <= :endYear and type = 'Income' AND category != 'Transfer'")
     BigDecimal getIncomeThisYear(Date startYear, Date endYear);
+
+    @Query("SELECT date, " +
+            "SUM(CASE WHEN type = 'Income' THEN amount ELSE 0 END) AS income, " +
+            "SUM(CASE WHEN type = 'Expense' THEN amount ELSE 0 END) AS expense " +
+            "FROM `Transaction`")
+    LiveData<List<IncomeExpense>> getDailyIncomesExpenses();
 }

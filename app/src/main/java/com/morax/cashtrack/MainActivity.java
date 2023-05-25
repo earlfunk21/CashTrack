@@ -6,6 +6,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.NotificationChannel;
@@ -13,6 +14,7 @@ import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -25,6 +27,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.morax.cashtrack.adapter.AccountAdapter;
 import com.morax.cashtrack.adapter.CategoryAdapter;
 import com.morax.cashtrack.adapter.TransactionAdapter;
@@ -34,6 +40,7 @@ import com.morax.cashtrack.database.dao.CategoryDao;
 import com.morax.cashtrack.database.dao.TransactionDao;
 import com.morax.cashtrack.database.entity.Account;
 import com.morax.cashtrack.database.entity.Category;
+import com.morax.cashtrack.database.entity.IncomeExpense;
 import com.morax.cashtrack.database.entity.Transaction;
 import com.morax.cashtrack.utils.CurrencyFormatter;
 
@@ -181,8 +188,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setDateAsWeekly(View view) {
-        // Current Date
-
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         Date startOfWeek = calendar.getTime();
@@ -420,4 +425,48 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
     }
+
+    public void showGraph(View view) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        View dialogView = getLayoutInflater().inflate(R.layout.show_graph, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+
+        PieChart pieChart = dialogView.findViewById(R.id.pieChart);
+
+        pieChart.setUsePercentValues(true);
+        pieChart.getDescription().setEnabled(false);
+        transactionDao.getDailyIncomesExpenses().observe(this, new Observer<List<IncomeExpense>>() {
+            @Override
+            public void onChanged(List<IncomeExpense> dailyIncomesExpenses) {
+                ArrayList<PieEntry> entries = new ArrayList<>();
+
+                for (IncomeExpense incomeExpense : dailyIncomesExpenses) {
+                    float expenseValue = incomeExpense.expense.floatValue();
+                    float incomeValue = incomeExpense.income.floatValue();
+
+                    if (expenseValue > 0) {
+                        entries.add(new PieEntry(expenseValue, "Expense"));
+                    }
+                    if (incomeValue > 0) {
+                        entries.add(new PieEntry(incomeValue, "Income"));
+                    }
+                }
+
+                PieDataSet dataSet = new PieDataSet(entries, "");
+                dataSet.setColors(Color.RED, Color.GREEN);
+
+                PieData pieData = new PieData(dataSet);
+
+                pieChart.setData(pieData);
+                pieChart.invalidate();
+            }
+        });
+
+        dialog.show();
+    }
+
+
 }
