@@ -32,22 +32,15 @@
         <TextView
             android:id="@+id/toolbarTitle"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="30dp"
             android:layout_weight="1"
             android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
-            android:text="@string/new_transaction"
+            android:text="Edit Transaction"
             android:textColor="@color/primary900"
             android:textSize="20sp" />
 
-        <ImageButton
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/transparent"
-            android:onClick="openTransfer"
-            android:padding="10dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/baseline_swap_horizontal_circle_24" />
     </LinearLayout>
 
     <LinearLayout
@@ -188,7 +181,7 @@
                 android:inputType="number"
                 android:letterSpacing=".1"
                 android:paddingStart="10dp"
-                android:textColor="@android:color/holo_red_light"
+                android:textColor="@color/primary900"
                 android:textColorHint="@color/disabled_text"
                 android:textSize="20sp"
                 tools:text="3,800,000" />

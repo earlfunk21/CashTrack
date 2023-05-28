@@ -33,6 +33,7 @@
             android:id="@+id/toolbarTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
             android:layout_weight="1"
             android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
@@ -122,7 +123,7 @@
                 android:inputType="number"
                 android:letterSpacing=".1"
                 android:paddingStart="10dp"
-                android:textColor="@android:color/holo_red_light"
+                android:textColor="@color/primary900"
                 android:textColorHint="@color/disabled_text"
                 android:textSize="20sp"
                 tools:text="3,800,000" />

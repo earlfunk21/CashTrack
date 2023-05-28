@@ -156,7 +156,7 @@
                 android:inputType="number"
                 android:letterSpacing=".1"
                 android:paddingStart="10dp"
-                android:textColor="@android:color/holo_red_light"
+                android:textColor="@color/primary900"
                 android:textColorHint="@color/disabled_text"
                 android:textSize="20sp"
                 tools:text="3,800,000" />
